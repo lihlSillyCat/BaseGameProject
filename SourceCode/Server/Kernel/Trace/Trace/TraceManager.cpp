@@ -2,20 +2,6 @@
 #include <ctime>
 #include "TraceManager.h"
 
-//日志字符串常量
-wchar CTraceManager::m_wsTraceLevel[TraceLevel::kTraceLevelNum][16] = 
-{
-	L"Log",			//日志
-	L"Debug",		//DEBUG日志
-	L"Infor",		//信息
-	L"Warning",		//警告
-	L"Assertion",	//断言
-	L"Error",		//错误
-	L"Critical",	//临界点、关键危急等
-	L"Exception",	//异常
-	L"Customize",	//用户自定义
-};
-
 //工作线程
 void WorkerThreadMain(CTraceManager* pTraceMgr)
 {
@@ -121,17 +107,10 @@ void CTraceManager::Shutdown()
 	safe_delete(m_pWorkerThread);
 }
 
-//添加日志项
-void CTraceManager::AddLogItem(TraceLevel enLevel, COLORREF color, const wchar* wsMsg)
+//添加日志信息(线程安全)
+void CTraceManager::AppendMsg(const wchar* wsMsg)
 {
-	if (!m_bRun || nullptr == wsMsg)
-	{
-		return;
-	}
-
-	//添加数据
-	time_t tt = time(nullptr);
-	m_LogData.push(LogItem(tt, wsMsg, enLevel, color));
+	m_LogData.push(std::wstring(wsMsg));
 
 	//置起数据事件
 	::SetEvent(m_hEvents[TraceEvent::kDataEvent]);
@@ -148,9 +127,11 @@ void CTraceManager::Update()
 		int index = dwRes - WAIT_OBJECT_0;
 		if (index == TraceEvent::kDataEvent)
 		{
-			while (m_LogData.pop(m_LogTemp))
+			std::wstring ws;
+			while (m_LogData.pop(ws))
 			{
-				PrintLog(m_LogTemp);
+				//文件保存
+				m_fsLogFile << ws.c_str();
 			}
 		}
 		//停止工作
@@ -164,31 +145,6 @@ void CTraceManager::Update()
 		//等待错误
 		m_bRun = false;
 	}
-}
-
-//日志输出
-void CTraceManager::PrintLog(LogItem& item)
-{
-	//格式化日志字符串
-	tm t;
-	localtime_s(&t, &item.time);
-
-	_snwprintf_s(m_wsBuffer, array_size(m_wsBuffer), L"[%04d-%02d-%02d %02d:%02d:%02d][%s]:%s\r\n",
-		t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec,
-		m_wsTraceLevel[item.enLevel], item.wsMsg.c_str());
-
-	////屏幕输出
-	//std::wcout << m_wsBuffer << std::endl;
-
-	////文件保存
-	//m_fsLogFile << m_wsBuffer << std::endl;
-
-	//Note:直接使用 \r\n 换行比 std::endl 要好。
-	//屏幕输出
-	std::wcout << m_wsBuffer;
-
-	//文件保存
-	m_fsLogFile << m_wsBuffer;
 }
 
 //线程退出通知

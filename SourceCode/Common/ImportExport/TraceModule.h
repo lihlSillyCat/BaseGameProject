@@ -21,7 +21,7 @@ lihl		2017/12/16		   1.0		  build this module
 class CTraceHelper
 {
 	//TRACE_API导出函数
-	typedef bool(*CreateTraceProc)(ITraceService** ppTrace, wchar* wsName, ITraceSink* pSink);
+	typedef bool(*CreateTraceProc)(ITraceService** ppTrace, wchar* wsName);
 
 public:
 	CTraceHelper():m_hDLL(NULL), m_pService(nullptr)
@@ -35,7 +35,7 @@ public:
 	//功能函数
 public:
 	//创建日志服务模块
-	bool Create(wchar* wsName, ITraceSink* pSink)
+	bool Create(wchar* wsName, ITraceView* pView)
 	{
 		if (NULL != m_hDLL || nullptr != m_pService)
 		{
@@ -59,14 +59,14 @@ public:
 			return false;
 		}
 
-		if (!CreateTrace(&m_pService, wsName, pSink))
+		if (!CreateTrace(&m_pService, wsName))
 		{
 			std::cout << "CreateTrace error[" << ::GetLastError() << "]" << std::endl;
 			Close();
 			return false;
 		}
 
-		if (!m_pService->Start())
+		if (!m_pService->Start(pView))
 		{
 			std::cout << "TraceService start failed." << std::endl;
 			Close();

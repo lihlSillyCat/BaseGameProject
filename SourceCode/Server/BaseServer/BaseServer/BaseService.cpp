@@ -37,18 +37,15 @@ bool CBaseService::Start()
 	{
 		return true;
 	}
-
-	if (!m_TraceHelper.Create(L"BaseServer", nullptr))
-	{
-		return false;
-	}
-	Trace()->Log(L"开始启动服务器···");
-
-	Trace()->Log(L"启动UI服务");
 	if (!m_UIService.Start())
 	{
 		return false;
 	}
+	if (!m_TraceHelper.Create(L"BaseServer", &m_UIService))
+	{
+		return false;
+	}
+	Trace()->Log(L"开始启动服务器···");
 	if (!m_CommonHelper.Start())
 	{
 		return false;

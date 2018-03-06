@@ -27,9 +27,8 @@ public:
 	void Shutdown();
 	//运转中
 	bool Running() const { return m_bRun; }
-
-	//添加日志项(线程安全)
-	void AddLogItem(TraceLevel enLevel, COLORREF color, const wchar* wsMsg);
+	//添加日志信息(线程安全)
+	void AppendMsg(const wchar* wsMsg);
 
 	//供给线程调度
 public:
@@ -40,31 +39,13 @@ public:
 
 	//内部函数
 private:
-	//日志数据
-	struct LogItem
-	{
-		time_t time;			//日志时间
-		std::wstring wsMsg;		//日志内容		
-		TraceLevel enLevel;		//日志等级
-		COLORREF	color;		//颜色RGB值
-		//构造函数
-		LogItem() {}
-		LogItem(time_t& tt, const wchar* ws, TraceLevel level, COLORREF cr) :
-			time(tt), wsMsg(ws), enLevel(level), color(cr) {}
-	};
-	//日志输出
-	void PrintLog(LogItem& item);
-
 	//清理数据
 	void Clear();
 
 	//成员变量
 private:
 	//日志数据缓存
-	safe_queue<LogItem> m_LogData;
-
-	//临时缓存，提高效率
-	LogItem m_LogTemp;
+	safe_queue<std::wstring> m_LogData;
 
 	//工作线程
 	std::atomic_bool m_bRun;
@@ -72,12 +53,6 @@ private:
 
 	//事件通知
 	HANDLE m_hEvents[TraceEvent::kNum];
-
-	//日志格式化缓冲区
-	wchar m_wsBuffer[4096];
-
-	//日志字符串常量
-	static wchar m_wsTraceLevel[TraceLevel::kTraceLevelNum][16];
 
 	//日志文件
 	std::wofstream m_fsLogFile;

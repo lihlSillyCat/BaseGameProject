@@ -72,3 +72,9 @@ void CUIService::ShowHelp()
 		std::cout << itr->first << std::endl;
 	}
 }
+
+//´°¿ÚÊä³ö
+void CUIService::PrintOnView(const wchar* wsMsg, ulong color)
+{
+	std::wcout << wsMsg;
+}

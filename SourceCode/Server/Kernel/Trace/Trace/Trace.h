@@ -21,13 +21,13 @@ enum TraceColor
 class CTrace : public ITraceService
 {
 public:
-	explicit CTrace(wchar* wsName, ITraceSink* pSink);
+	explicit CTrace(wchar* wsName);
 	~CTrace();
 
 	//ITraceService 继承
 public:
 	//启动服务
-	bool Start() override;
+	bool Start(ITraceView* pView) override;
 	//停止服务
 	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
 	void Shutdown() override;
@@ -73,8 +73,8 @@ public:
 	void LogExceptionFormat(const wchar* wsFormat, ...) override;
 
 	//打印自定义信息
-	void LogCustom(COLORREF color, const wchar* wsMsg) override;
-	void LogCustomFormat(COLORREF color, const wchar* wsFormat, ...) override;
+	void LogCustom(ulong color, const wchar* wsMsg) override;
+	void LogCustomFormat(ulong color, const wchar* wsFormat, ...) override;
 
 	//代码定位
 	void LogLocate(TraceLevel enLevel, const wchar* wsFileName, const wchar* wsFuncName, uint uLineCnt, const wchar* wsMsg) override;
@@ -88,13 +88,18 @@ public:
 public:
 	//获取颜色
 	COLORREF GetColor(TraceLevel enLevel) const;
+	//打印日志
+	void PrintLog(TraceLevel enLevel, COLORREF color, const wchar* wsMsg);
 
 	//内部成员
 private:
-	ITraceSink* m_pSink;
+	ITraceView* m_pView;
 	CTraceManager m_TraceMgr;
 	//数据解析缓存区
 	wchar m_wsBuffer[LOG_BUFFER_SIZE];
+	wchar m_wsPrintBuffer[LOG_BUFFER_SIZE];
+	//日志字符串常量
+	static wchar m_wsTraceLevel[TraceLevel::kTraceLevelNum][16];
 	//读写锁，保证线程安全
 	SRWLOCK m_SRWLock;
 };

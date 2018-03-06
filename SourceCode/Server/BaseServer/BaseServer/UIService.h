@@ -36,11 +36,16 @@ struct UICmdData
 	schar param[256];	//自定义参数
 };
 
-class CUIService
+class CUIService : public ITraceView
 {
 public:
 	CUIService();
 	~CUIService();
+
+	//继承 ITraceView
+protected:
+	//窗口输出
+	void PrintOnView(const wchar* wsMsg, ulong color) override;
 
 	//服务控制
 public:

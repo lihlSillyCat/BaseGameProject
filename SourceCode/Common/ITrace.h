@@ -93,8 +93,8 @@ interface ITrace
 	virtual void LogExceptionFormat(const wchar* wsFormat, ...) = 0;
 
 	//打印自定义信息
-	virtual void LogCustom(COLORREF color, const wchar* wsMsg) = 0;
-	virtual void LogCustomFormat(COLORREF color, const wchar* wsFormat, ...) = 0;
+	virtual void LogCustom(ulong color, const wchar* wsMsg) = 0;
+	virtual void LogCustomFormat(ulong color, const wchar* wsFormat, ...) = 0;
 
 	//代码定位
 	virtual void LogLocate(TraceLevel enLevel, const wchar* wsFileName, const wchar* wsFuncName, uint uLineCnt, const wchar* wsMsg) = 0;
@@ -104,20 +104,18 @@ interface ITrace
 	virtual void LogLocateFormat(TraceLevel enLevel, const char* strFileName, const char* strFuncName, uint uLineCnt, const wchar* wsFormat, ...) = 0;
 };
 
-//日志类的回调
-interface ITraceSink
+//日志窗口视图
+interface ITraceView
 {
-	//通知
-	virtual void Notify(sint nKey) = 0;
-	//退出
-	virtual void OnTraceServiceShutdown() = 0;
+	//窗口输出
+	virtual void PrintOnView(const wchar* wsMsg, ulong color) = 0;
 };
 
 //日志服务类
 interface ITraceService : public ITrace
 {
 	//启动服务
-	virtual bool Start() = 0;
+	virtual bool Start(ITraceView* pView) = 0;
 	//停止服务
 	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
 	virtual void Shutdown() = 0;
