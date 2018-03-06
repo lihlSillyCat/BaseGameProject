@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="启动服务器">
+      <UniqueIdentifier>{1a6257fd-9712-4256-9bea-ce9c92316902}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{5ca8c187-fbf0-49af-bf40-c2a82d4d8d2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="基础服务">
+      <UniqueIdentifier>{1ad66574-e4ab-442a-b943-76a38b2e7dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="基础服务\UI服务">
+      <UniqueIdentifier>{2049c4ee-ac24-4f40-9129-fdb36f600eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="基础服务\应用程序信息">
+      <UniqueIdentifier>{b82005fc-cd5f-48d3-877e-52b0cced7439}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UIService.h">
+      <Filter>基础服务\UI服务</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseService.h">
+      <Filter>基础服务</Filter>
+    </ClInclude>
+    <ClInclude Include="AppInfo.h">
+      <Filter>基础服务\应用程序信息</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UIService.cpp">
+      <Filter>基础服务\UI服务</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseService.cpp">
+      <Filter>基础服务</Filter>
+    </ClCompile>
+    <ClCompile Include="AppInfo.cpp">
+      <Filter>基础服务\应用程序信息</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="进程通信服务">
+      <UniqueIdentifier>{d65aa235-def5-43a8-8c7b-8367c78d4c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="进程通信服务\进程通信对象">
+      <UniqueIdentifier>{9fafb1a3-4369-40e2-b367-e9ece4dec5bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务">
+      <UniqueIdentifier>{1e2011ce-11e5-42c5-9114-1e51c5dd3b32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象">
+      <UniqueIdentifier>{d51c1b94-af8c-444c-aaa0-90a1855af1e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象\服务端">
+      <UniqueIdentifier>{782cca72-a4cc-4334-87ad-8f190a2b1604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象\客户端">
+      <UniqueIdentifier>{5fde063b-3977-4b21-830d-e6b7757e26ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象\连接对象">
+      <UniqueIdentifier>{21f67c2c-f78b-42d9-a5ab-355167085861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象\连接对象\连接池">
+      <UniqueIdentifier>{db97522e-dd9a-4c6f-bf26-93332d518604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="通信服务">
+      <UniqueIdentifier>{4a825aa0-a29e-4c47-8950-af21aaad5214}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="网络通信服务\网络通信对象\异步IO请求">
+      <UniqueIdentifier>{1e03a261-86ed-4050-b061-2f84b1d91694}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Communication.h">
+      <Filter>通信服务</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Common\ICommunication.h">
+      <Filter>通信服务</Filter>
+    </ClInclude>
+    <ClInclude Include="UDPServer.h">
+      <Filter>网络通信服务\网络通信对象\服务端</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPServer.h">
+      <Filter>网络通信服务\网络通信对象\服务端</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPClient.h">
+      <Filter>网络通信服务\网络通信对象\客户端</Filter>
+    </ClInclude>
+    <ClInclude Include="UDPClient.h">
+      <Filter>网络通信服务\网络通信对象\客户端</Filter>
+    </ClInclude>
+    <ClInclude Include="Winsock.h">
+      <Filter>网络通信服务\网络通信对象</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkService.h">
+      <Filter>网络通信服务</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NetConnection.h">
+      <Filter>网络通信服务\网络通信对象\连接对象</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedRes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NetIORequst.h">
+      <Filter>网络通信服务\网络通信对象\异步IO请求</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Communication.cpp">
+      <Filter>通信服务</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPServer.cpp">
+      <Filter>网络通信服务\网络通信对象\服务端</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPServer.cpp">
+      <Filter>网络通信服务\网络通信对象\服务端</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPClient.cpp">
+      <Filter>网络通信服务\网络通信对象\客户端</Filter>
+    </ClCompile>
+    <ClCompile Include="UDPClient.cpp">
+      <Filter>网络通信服务\网络通信对象\客户端</Filter>
+    </ClCompile>
+    <ClCompile Include="Winsock.cpp">
+      <Filter>网络通信服务\网络通信对象</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkService.cpp">
+      <Filter>网络通信服务</Filter>
+    </ClCompile>
+    <ClCompile Include="NetConnection.cpp">
+      <Filter>网络通信服务\网络通信对象\连接对象</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedRes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NetIORequst.cpp">
+      <Filter>网络通信服务\网络通信对象\异步IO请求</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Communication.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
