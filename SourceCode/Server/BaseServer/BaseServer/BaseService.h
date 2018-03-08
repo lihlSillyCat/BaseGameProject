@@ -17,8 +17,8 @@ lihl		2018/3/5    	   1.0		  build this module
 
 #pragma once
 
-#include "ImportExport\TraceModule.h"
-#include "ImportExport\CommonModule.h"
+
+#include "KernelLib\KernelExport.h"
 #include "UIService.h"
 #include "AppInfo.h"
 
@@ -43,10 +43,18 @@ public:
 	//功能组件
 public:
 	//日志服务
-	ITrace* Trace() { return m_TraceHelper.GetTrace(); }
+	ITrace* Trace() { return m_TraceHelper.GetService(); }
 
-	//功能函数
-public:
+protected:
+	//公共服务
+	ICommonService* CommonService() { return m_CommonHelper.GetService(); }
+	//通信服务
+	ICommunicationService* CommunicationService() { return m_CommunicationHelper.GetService(); }
+
+	//内部功能
+protected:
+	//清理资源
+	void Clear();
 
 	//成员变量
 private:
@@ -61,9 +69,11 @@ private:
 	//数据服务
 	//....
 	//公共组件
-	CCommonHelper m_CommonHelper;
+	CKernelModuleAssistant<ICommonService> m_CommonHelper;
 	IProactor* m_pProactor;
+	//通信模块
+	CKernelModuleAssistant<ICommunicationService> m_CommunicationHelper;
 	//日志服务
-	CTraceHelper m_TraceHelper;
+	CKernelModuleAssistant<ITraceService> m_TraceHelper;
 };
 

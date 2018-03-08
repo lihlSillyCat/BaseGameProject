@@ -37,35 +37,62 @@ bool CBaseService::Start()
 	{
 		return true;
 	}
-	if (!m_UIService.Start())
+	do
 	{
-		return false;
-	}
-	if (!m_TraceHelper.Create(L"BaseServer", &m_UIService))
+		if (!m_UIService.Start())
+			break;
+
+		if (!m_TraceHelper.LoadServiceObject(KernelModule::kTrace))
+		{
+			m_UIService.PrintOnView(L"加载日志模块失败");
+			break;
+		}
+		if (!m_TraceHelper.GetService()->Start(&m_UIService, L"BaseServer"))
+		{
+			m_UIService.PrintOnView(L"日志服务启动失败");
+			break;
+		}
+		Trace()->Log(L"开始启动服务器···");
+		if (!m_CommonHelper.LoadServiceObject(KernelModule::kCommon))
+		{
+			Trace()->LogErrorFormat(L"加载公共模块失败[%s]", kNAME_KERNEL[KernelModule::kCommon]);
+			break;
+		}
+		if (!CommonService()->Start(Trace(), m_AppInfo.Environment()))
+		{
+			Trace()->LogError(L"公共服务启动失败");
+			break;
+		}
+		Trace()->Log(L"启动主动器");
+		m_pProactor = CommonService()->CreateProactor();
+		if (m_pProactor == nullptr)
+		{
+			Trace()->LogError(L"启动主动器失败");
+			break;
+		}
+		Trace()->Log(L"启动通信模块");
+		if (!m_CommunicationHelper.LoadServiceObject(KernelModule::kCommunication))
+		{
+			Trace()->LogErrorFormat(L"加载通信模块失败[%s]", kNAME_KERNEL[KernelModule::kCommunication]);
+			break;
+		}
+		if (!CommunicationService()->Start(Trace(), m_pProactor, m_AppInfo.Environment()))
+		{
+			Trace()->LogError(L"通信服务启动失败");
+			return false;
+		}
+
+		m_bRunning = true;
+		Trace()->Log(L"服务器已启动，开始工作");
+	} while (false);
+
+	//清理未启动成功的资源
+	if (!m_bRunning)
 	{
-		return false;
-	}
-	Trace()->Log(L"开始启动服务器···");
-	if (!m_CommonHelper.Start())
-	{
-		return false;
-	}	
-	if (!m_CommonHelper.InitCommonService(m_TraceHelper.GetTrace(), m_AppInfo.Environment()))
-	{
-		return false;
-	}
-	Trace()->Log(L"启动主动器");
-	m_pProactor = m_CommonHelper.CommonService()->CreateProactor();
-	if (m_pProactor == nullptr)
-	{
-		Trace()->Log(L"启动主动器失败");
-		return false;
+		Clear();
 	}
 
-	m_bRunning = true;
-	Trace()->Log(L"服务器已启动，开始工作");
-
-	return true;
+	return m_bRunning;
 }
 
 //结束
@@ -76,14 +103,25 @@ void CBaseService::Shutdown()
 		return;
 	}
 
-	m_TraceHelper.GetTrace()->Log(L"开始停止服务器···");
+	Trace()->Log(L"开始停止服务器···");
+	Trace()->Log(L"停止通信服务···");
+	m_CommunicationHelper.Close();
 	Trace()->Log(L"停止主动器···");
 	m_CommonHelper.Close();
 	Trace()->Log(L"停止UI服务···");
 	m_UIService.Shutdown();
-	m_TraceHelper.GetTrace()->Log(L"服务器已停止");
+	Trace()->Log(L"服务器已停止");
 	m_TraceHelper.Close();
 	m_bRunning = false;
+}
+
+//清理资源
+void CBaseService::Clear()
+{
+	m_CommonHelper.Close();
+	m_CommunicationHelper.Close();
+	m_TraceHelper.Close();
+	m_UIService.Shutdown();
 }
 
 //主循环

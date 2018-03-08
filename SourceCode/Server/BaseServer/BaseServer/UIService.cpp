@@ -6,7 +6,7 @@ CUIService::CUIService():
 	m_bRunning(false),
 	m_CmdLibraries{ {"start", UICommand::kStart},
 					{"shutdown", UICommand::kShutdown},
-					{"update config", UICommand::kUpdateConfig}, 
+					{"updateconfig", UICommand::kUpdateConfig}, 
 					{"help", UICommand::kHelp} }
 {
 
@@ -38,7 +38,7 @@ void CUIService::Shutdown()
 //»­²¼GUIÖ¡Ë¢ÐÂ
 bool CUIService::CanvasUpdate(UICmdData &Cmd)
 {
-	std::cout << "Please enter a command, Type \"help\" for more information." << std::endl;
+	std::cout << "UIService==>>Please enter a command, Type \"help\" for more information." << std::endl;
 	char strCmd[256];
 	std::cin >> strCmd;
 
@@ -46,6 +46,7 @@ bool CUIService::CanvasUpdate(UICmdData &Cmd)
 	if (itr == m_CmdLibraries.end())
 	{
 		Cmd.cmd = UICommand::kInvalid;
+		std::cout << "UIService==>>Unkown command, Type \"help\" for more information." << std::endl;
 		return false;
 	}
 
@@ -66,7 +67,7 @@ bool CUIService::AppendMsg(const wchar* wsMsg)
 //ÏÔÊ¾°ïÖú
 void CUIService::ShowHelp()
 {
-	std::cout << "Here are commands:" << std::endl;
+	std::cout << "UIService==>>Here are commands:" << std::endl;
 	for (auto itr = m_CmdLibraries.begin(); itr != m_CmdLibraries.end(); itr++)
 	{
 		std::cout << itr->first << std::endl;

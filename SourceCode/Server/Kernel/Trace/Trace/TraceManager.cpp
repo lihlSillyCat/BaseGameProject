@@ -19,10 +19,9 @@ void WorkerThreadMain(CTraceManager* pTraceMgr)
 }
 
 //日志管理类
-CTraceManager::CTraceManager(wchar* wsName):
+CTraceManager::CTraceManager():
 	m_bRun(false),
-	m_pWorkerThread(nullptr),
-	m_wsFileName(wsName)
+	m_pWorkerThread(nullptr)
 {
 	for (size_t i = 0; i < array_size(m_hEvents); i++)
 	{
@@ -36,12 +35,15 @@ CTraceManager::~CTraceManager()
 }
 
 //开始
-bool CTraceManager::Start()
+bool CTraceManager::Start(const wchar* wsLogFileName)
 {
-	if (m_bRun)
+	if (m_bRun || nullptr == wsLogFileName)
 	{
 		return true;
 	}
+
+	m_wsFileName.clear();
+	m_wsFileName.append(wsLogFileName);
 
 	//创建数据事件和退出事件
 	m_hEvents[kDataEvent] = ::CreateEvent(NULL, FALSE, FALSE, NULL);

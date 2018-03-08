@@ -26,17 +26,26 @@ lihl		2018/2/5     	   1.0		  build this module
 #include "NetConnection.h"
 
 //TCP网络服务器类
-class CTCPServer : public IConnectionServer, public CWinsock
+class CTCPServer : public CWinsock, public INetServer
 {
 public:
-	CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler);
+	CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler, bool bEnableEnDecryption);
 	virtual ~CTCPServer();
 
 	//继承 CWinsock
 protected:
 	//操作完成通知
 	//参数 pIORequst：IO请求包
-	virtual void OnIOCompleted(IIORequst* pIORequst) override;
+	void OnIOCompleted(IIORequst* pIORequst) override;
+
+	//继承 INetServer
+public:
+	//地址信息(ip和端口)
+	void GetLocalAddr(ulong& ip, ushort& port) override;
+	void GetLocalAddr(wchar* wsIP, uint nSize, ushort& port) override;
+	//加解密状态
+	//返回false表示明码传输；返回true表示加密传输
+	bool EnableEnDecryption() override { return m_bEncryptionDecryption; }
 
 	//控制功能
 public:
@@ -44,15 +53,9 @@ public:
 	bool Start(ushort uPort);
 	//停止服务
 	void Shutdown();
-	////运行状态
-	//bool Running() const { return m_bRunning; }
-
+	
 	//信息获取
 public:
-	//网络地址
-	//输出参数 pwsIP:网络IP
-	//输出参数 pPort:端口
-	//bool AddrInfo(const wchar** pwsIP, ushort* pPort);
 
 	//内部功能
 protected:
@@ -82,5 +85,7 @@ protected:
 	INetServerHandler* m_pServerHandler;
 	//客户端连接的事件处理器
 	INetConnectionHandler* m_pConnectionHandler;
+	//加解密
+	bool m_bEncryptionDecryption;
 };
 

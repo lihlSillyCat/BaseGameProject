@@ -43,9 +43,9 @@ public:
 	~CUIService();
 
 	//继承 ITraceView
-protected:
+public:
 	//窗口输出
-	void PrintOnView(const wchar* wsMsg, ulong color) override;
+	void PrintOnView(const wchar* wsMsg, ulong color = 0) override;
 
 	//服务控制
 public:

@@ -21,13 +21,13 @@ enum TraceColor
 class CTrace : public ITraceService
 {
 public:
-	explicit CTrace(wchar* wsName);
+	explicit CTrace();
 	~CTrace();
 
 	//ITraceService 继承
 public:
 	//启动服务
-	bool Start(ITraceView* pView) override;
+	bool Start(ITraceView* pView, const wchar* wsLogFileName) override;
 	//停止服务
 	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
 	void Shutdown() override;

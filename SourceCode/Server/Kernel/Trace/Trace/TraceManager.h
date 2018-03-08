@@ -16,13 +16,13 @@ enum TraceEvent
 class CTraceManager
 {
 public:
-	CTraceManager(wchar* wsName);
+	CTraceManager();
 	~CTraceManager();
 	
 	//功能函数
 public:
 	//开始
-	bool Start();
+	bool Start(const wchar* wsLogFileName);
 	//停止
 	void Shutdown();
 	//运转中

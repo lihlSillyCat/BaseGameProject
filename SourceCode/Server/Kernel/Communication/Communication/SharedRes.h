@@ -23,16 +23,16 @@ lihl		2018/2/27    	   1.0		  build this module
 #define Trace() CSharedRes::Instance()->GetTrace()
 //主动器
 #define Proactor() CSharedRes::Instance()->GetProactor()
-//应用程序信息
-#define AppInfo() CSharedRes::Instance()->GetAppInfo()
+//开发环境
+#define DevEnvironment() CSharedRes::Instance()->GetDevEnvironment()
 
 //共享资源类定义
 class CSharedRes : public CSingleton<CSharedRes>
 {
 	//禁止创建对象、拷贝、赋值
 private:
-	CSharedRes();
-	~CSharedRes();
+	CSharedRes() {}
+	~CSharedRes() {}
 	DISALLOW_COPY_AND_ASSIGN(CSharedRes);
 	friend class CSingleton<CSharedRes>;
 
@@ -42,17 +42,17 @@ public:
 	ITrace* GetTrace() const { return m_pTrace; }
 	//主动器
 	IProactor* GetProactor() const { return m_pProactor; }
-	//应用程序信息
-	IAppInfo* GetAppInfo() const { return m_pAppInfo; }
+	//应用程序开发环境
+	DevelopmentEnvironment GetDevEnvironment() const { return m_DevEnvironment; }
 
 	//功能函数
 public:
 	//日志
-	void SetTrace(ITrace* pTrace);
+	void SetTrace(ITrace* pTrace) { m_pTrace = pTrace; }
 	//主动器
-	void SetProactor(IProactor* pProactor);
-	//应用程序信息
-	void SetAppInfo(IAppInfo* pAppInfo);
+	void SetProactor(IProactor* pProactor) { m_pProactor = pProactor; }
+	//设置应用程序开发环境
+	void SetDevEnvironment(DevelopmentEnvironment DevEnvironment) { m_DevEnvironment = DevEnvironment; }
 
 	//成员变量
 private:
@@ -60,7 +60,7 @@ private:
 	ITrace* m_pTrace;
 	//主动器
 	IProactor* m_pProactor;
-	//应用程序信息
-	IAppInfo* m_pAppInfo;
+	//应用程序开发环境
+	DevelopmentEnvironment m_DevEnvironment;
 };
 

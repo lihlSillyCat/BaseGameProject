@@ -23,10 +23,11 @@ lihl		2018/3/1     	   1.1		  添加接收代码
 //连接对象池(服务端公用)
 CObjectPool<CNetConnection> CTCPServer::m_ConnectionPool;
 
-CTCPServer::CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler) :
+CTCPServer::CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler, bool bEnableEnDecryption) :
 	m_pServerHandler(pServerHandler),
 	m_pConnectionHandler(pConnectionHandler),
-	m_fnAcceptEx(NULL)
+	m_fnAcceptEx(NULL),
+	m_bEncryptionDecryption(bEnableEnDecryption)
 {
 	ASSERT_LOG(Trace(), pServerHandler != nullptr, L"网络服务器事件处理器不能为空");
 	ASSERT_LOG(Trace(), pConnectionHandler != nullptr, L"网络服务器客户端连接的事件处理器不能为空");
@@ -160,16 +161,18 @@ bool CTCPServer::CreateListenSocket(ushort uPort)
 	return true;
 }
 
-//网络地址
-//输出参数 pwsIP:网络IP
-//输出参数 pPort:端口
-//bool CTCPServer::AddrInfo(const wchar** pwsIP, ushort* pPort)
-//{
-//	*pwsIP = m_wsIP;
-//	*pPort = m_uPort;
-//
-//	return false;
-//}
+//地址信息(ip和端口)
+void CTCPServer::GetLocalAddr(ulong& ip, ushort& port)
+{
+	ip = m_sockaddr.sin_addr.S_un.S_addr;
+	port = m_sockaddr.sin_port;
+}
+
+void CTCPServer::GetLocalAddr(wchar* wsIP, uint nSize, ushort& port)
+{
+	port = m_sockaddr.sin_port;
+	InetNtop(m_sockaddr.sin_family, &m_sockaddr.sin_addr, wsIP, nSize);
+}
 
 //创建客户端连接并用于Accept
 bool CTCPServer::CreateClientsAndAccept()
@@ -240,7 +243,7 @@ void CTCPServer::OnIOCompletedAccept(CNetAcceptIOReq* pIORequst)
 
 	//生成一新的连接并释放IO请求包
 	CNetConnection* pConnection = m_ConnectionPool.NewObject();
-	pConnection->Init(pIORequst->sockAccept, remoteaddr, m_pConnectionHandler);
+	pConnection->Init(pIORequst->sockAccept, remoteaddr, m_pConnectionHandler, m_bEncryptionDecryption);
 	delete pIORequst;
 
 	//将新连接加入主动器

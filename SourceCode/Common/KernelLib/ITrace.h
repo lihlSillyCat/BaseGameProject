@@ -16,7 +16,7 @@ lihl		2017/10/17		   1.0		  build this module
 ************************************************************************/
 #pragma once
 #include <assert.h>
-#include "SharedDefine.h"
+#include "IModule.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //便利宏
@@ -108,17 +108,14 @@ interface ITrace
 interface ITraceView
 {
 	//窗口输出
-	virtual void PrintOnView(const wchar* wsMsg, ulong color) = 0;
+	virtual void PrintOnView(const wchar* wsMsg, ulong color = 0) = 0;
 };
 
 //日志服务类
-interface ITraceService : public ITrace
+interface ITraceService : public ITrace , public IService
 {
 	//启动服务
-	virtual bool Start(ITraceView* pView) = 0;
-	//停止服务
-	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
-	virtual void Shutdown() = 0;
-	//服务状态
-	virtual bool Serviceable() = 0;
+	//参数：pView界面视图
+	//参数：wsLogFileName主日志文件名
+	virtual bool Start(ITraceView* pView, const wchar* wsLogFileName) = 0;
 };

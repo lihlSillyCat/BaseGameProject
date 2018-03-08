@@ -17,10 +17,9 @@ lihl		2018/2/5     	   1.0		  build this module
 
 #include "stdafx.h"
 #include "NetworkService.h"
+#include "TCPServer.h"
 
-
-CNetworkService::CNetworkService(ITrace* pTrace) :
-	m_pTrace(pTrace),
+CNetworkService::CNetworkService() :
 	m_bRunning(false)
 {
 
@@ -43,7 +42,7 @@ bool CNetworkService::Start()
 	int res = WSAStartup(MAKEWORD(2, 2), &m_wsaData);
 	if (res != 0)
 	{
-		m_pTrace->LogErrorFormat(L"WSAStartup failed: %d\n", res);
+		Trace()->LogErrorFormat(L"WSAStartup failed: %d\n", res);
 		return false;
 	}
 	m_bRunning = true;
@@ -62,15 +61,57 @@ void CNetworkService::Shutdown()
 	}
 	m_bRunning = false;
 
+	for (auto itr = m_vecTCPServers.begin(); itr != m_vecTCPServers.end(); itr++)
+	{
+		(*itr)->Shutdown();
+		delete (*itr);
+	}
+
 	//清理系统网络
 	WSACleanup();
-
-	//自释放
-	delete this;
 }
 
 //可服务状态
 bool CNetworkService::Serviceable()
 {
 	return m_bRunning;
+}
+
+//创建网络服务器
+//参数：pConnectionHandler该网络服务器下所有客户端连接的事件处理器
+//参数：uPort范围 [1024,49151], 传入0表示系统任意指定端口
+//说明：目前仅支持TCP
+INetServer* CNetworkService::CreateServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler,
+	ushort uPort, NetProtocol enProtocol, bool bEnableEnDecryption)
+{
+	if (!m_bRunning || nullptr == pServerHandler || nullptr == pConnectionHandler 
+		|| (uPort != 0 && (uPort < 1024 || uPort > 49151)))
+	{
+		return nullptr;
+	}
+
+	switch (enProtocol)
+	{	
+	case NetProtocol::kTCP:
+		return CreateTCPServer(pServerHandler, pConnectionHandler, uPort, bEnableEnDecryption);
+	default:
+		break;
+	}
+
+	return nullptr;
+}
+
+//创建TCP服务端对象
+INetServer* CNetworkService::CreateTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler,
+	ushort uPort, bool bEnableEnDecryption)
+{
+	CTCPServer* pServer = new CTCPServer(pServerHandler, pConnectionHandler, bEnableEnDecryption);
+	if (!pServer->Start(uPort))
+	{
+		return nullptr;
+	}
+
+	m_vecTCPServers.push_back(pServer);
+
+	return pServer;
 }

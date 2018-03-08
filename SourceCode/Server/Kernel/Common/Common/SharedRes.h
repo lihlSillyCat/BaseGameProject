@@ -23,7 +23,7 @@ lihl		2018/3/5    	   1.0		  build this module
 
 //日志
 #define Trace() CSharedRes::Instance()->GetTrace()
-//应用程序信息
+//开发环境
 #define DevEnvironment() CSharedRes::Instance()->GetDevEnvironment()
 
 //共享资源类定义
@@ -47,7 +47,7 @@ public:
 public:
 	//日志
 	void SetTrace(ITrace* pTrace) { m_pTrace = pTrace; }
-	//应用程序信息
+	//设置应用程序开发环境
 	void SetDevEnvironment(DevelopmentEnvironment DevEnvironment) { m_DevEnvironment = DevEnvironment; }
 
 	//成员变量
