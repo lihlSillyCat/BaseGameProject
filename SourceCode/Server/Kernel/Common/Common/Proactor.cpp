@@ -34,22 +34,28 @@ void WorkThreadMain(CProactor* pProactor)
 		//输出参数 lpNumberOfBytes：IO已传输的字节数
 		//输出参数 lpCompletionKey：用户在AssociateDevice时传入的KEY
 		//输出参数 lpOverlapped：用户在使用异步时传入的Overlapped
-		if (!pProactor->m_IoCP.GetStatus(&dwNumberOfBytes, &pCompletionKey, &lpOverlapped))
-		{
-			continue;
-		}
+		//返回值：成功返回 IOCP_SUCCESS；失败返回错误码
+		DWORD dwCode = pProactor->m_IoCP.GetStatus(&dwNumberOfBytes, &pCompletionKey, &lpOverlapped);
 		
 		//参数转换，完成通知
 		pIORequst = (IIORequst*)lpOverlapped;
-		if (CProactor::CompletionKey::kExit != pCompletionKey)
+		if (IOCP_SUCCESS == dwCode)
 		{
-			pIORequst->uNumOfBytesTransferred = dwNumberOfBytes;
-			((IIODevice*)pCompletionKey)->OnIOCompleted(pIORequst);
+			if (CProactor::CompletionKey::kExit != pCompletionKey)
+			{
+				pIORequst->uNumOfBytesTransferred = dwNumberOfBytes;
+				((IIODevice*)pCompletionKey)->OnIOCompleted(pIORequst);
+			}
+			else
+			{
+				delete pIORequst;
+				break;
+			}
 		}
 		else
 		{
-			delete pIORequst;
-			break;
+			pIORequst->uNumOfBytesTransferred = dwNumberOfBytes;
+			((IIODevice*)pCompletionKey)->OnIOCompletedError(pIORequst, dwCode);
 		}
 	}	
 }

@@ -100,32 +100,29 @@ bool CIoCP::AssociateDevice(HANDLE hDevice, ULONG_PTR CompletionKey)
 
 //投递已完成IO消息
 //该消息会触发 GetStatus
-bool CIoCP::PostStatus(DWORD dwNumberOfBytesTransferred, ULONG_PTR CompletionKey, LPOVERLAPPED lpOverlapped)
+//返回值：成功返回 IOCP_SUCCESS；失败返回错误码
+DWORD CIoCP::PostStatus(DWORD dwNumberOfBytesTransferred, ULONG_PTR CompletionKey, LPOVERLAPPED lpOverlapped)
 {
-	BOOL res = ::PostQueuedCompletionStatus(m_hIoCP, dwNumberOfBytesTransferred, CompletionKey, lpOverlapped);
-	if (FALSE == res)
+	if (FALSE == ::PostQueuedCompletionStatus(m_hIoCP, dwNumberOfBytesTransferred, CompletionKey, lpOverlapped))
 	{
-		Trace()->LogErrorFormat(L"完成端口投递IO完成消息失败，错误码[%d]", ::GetLastError());
-		return false;
+		return ::GetLastError();
 	}
 
-	return true;
+	return IOCP_SUCCESS;
 }
 
 //等待设备I/O完成，线程阻塞
 //输出参数 lpNumberOfBytes：IO已传输的字节数
 //输出参数 lpCompletionKey：用户在AssociateDevice时传入的KEY
 //输出参数 lpOverlapped ：用户在使用异步时传入的Overlapped
-bool CIoCP::GetStatus(LPDWORD lpNumberOfBytes, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped)
+//返回值：成功返回 IOCP_SUCCESS；失败返回错误码
+DWORD CIoCP::GetStatus(LPDWORD lpNumberOfBytes, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped)
 {
-	BOOL bRes = ::GetQueuedCompletionStatus(m_hIoCP, lpNumberOfBytes, lpCompletionKey, lpOverlapped, INFINITE);
-
-	if (FALSE == bRes)
+	if (FALSE == ::GetQueuedCompletionStatus(m_hIoCP, lpNumberOfBytes, lpCompletionKey, lpOverlapped, INFINITE))
 	{
-		Trace()->LogErrorFormat(L"完成端口获取IO完成状态失败，错误码[%d]", ::GetLastError());
-		return false;
+		return ::GetLastError();
 	}
 
-	return true;
+	return IOCP_SUCCESS;
 }
 

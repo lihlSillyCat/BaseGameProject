@@ -48,9 +48,14 @@ interface IIODevice
 	//设备名称
 	virtual const wchar* Name() = 0;
 
-	//操作完成通知
+	//操作完成通知（成功）
 	//参数 pIORequst：IO请求包
 	virtual void OnIOCompleted(IIORequst* pIORequst) = 0;
+
+	//操作完成通知（失败）
+	//参数 pIORequst：IO请求包
+	//参数 nErrorCode ： 错误码
+	virtual void OnIOCompletedError(IIORequst* pIORequst, ulong nErrorCode) = 0;
 };
 
 //主动器接口

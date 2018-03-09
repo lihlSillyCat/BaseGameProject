@@ -17,6 +17,8 @@ lihl		2018/01/25		   1.1		  完善函数的封装和实现，接入日志输出
 ************************************************************************/
 #pragma once
 
+#define IOCP_SUCCESS	0	//完成端口操作成功
+
 //完成端口类
 class CIoCP
 {
@@ -43,13 +45,15 @@ public:
 	//输出参数 lpNumberOfBytes：IO已传输的字节数
 	//输出参数 lpCompletionKey：用户在AssociateDevice时传入的KEY
 	//输出参数 lpOverlapped：用户在使用异步时传入的Overlapped
-	bool GetStatus(LPDWORD lpNumberOfBytes, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped);
+	//返回值：成功返回 IOCP_SUCCESS；失败返回错误码
+	DWORD GetStatus(LPDWORD lpNumberOfBytes, PULONG_PTR lpCompletionKey, LPOVERLAPPED *lpOverlapped);
 
 	//主动投递I/O完成消息，会触发函数 GetStatus 返回
 	//输入参数 dwNumberOfBytesTransferred：函数GetStatus返回该值
 	//输入参数 CompletionKey：函数GetStatus返回该值
 	//输入参数 lpOverlapped：函数GetStatus返回该值
-	bool PostStatus(DWORD dwNumberOfBytesTransferred, ULONG_PTR CompletionKey, LPOVERLAPPED lpOverlapped);
+	//返回值：成功返回 IOCP_SUCCESS；失败返回错误码
+	DWORD PostStatus(DWORD dwNumberOfBytesTransferred, ULONG_PTR CompletionKey, LPOVERLAPPED lpOverlapped);
 
 	//释放完成端口
 	void Release();
