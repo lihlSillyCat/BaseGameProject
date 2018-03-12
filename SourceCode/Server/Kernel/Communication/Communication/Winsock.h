@@ -23,10 +23,8 @@ lihl		2018/1/5     	   1.0		  build this module
 enum NetConstant
 {
 	kAddrBufSize = (sizeof(sockaddr_in) + 16),	//AcceptEx最小地址长度
-	kAcceptIOReqMin = 32,						//Accept最小等待数量
-	kAcceptIOReqMax = 256,						//Accept最大等待数量
-	kIncomingConnectionMinNum = 16,				//连接泚中最小连接数
-	kIncomingConnectionMaxNum = 64,				//连接泚中最大连接数
+	kIncomingConnectionMinNum = 1,				//连接泚中最小连接数
+	kIncomingConnectionMaxNum = 8,				//连接泚中最大连接数
 	kMaxWSABufSize = 8192,						//网络接收和发送的最大缓存（字节数）		
 };
 
@@ -46,6 +44,10 @@ public:
 	//操作完成通知
 	//参数 pIORequst：IO请求包
 	virtual void OnIOCompleted(IIORequst* pIORequst) = 0;
+	//操作完成通知（失败）
+	//参数 pIORequst：IO请求包
+	//参数 nErrorCode ： 错误码
+	virtual void OnIOCompletedError(IIORequst* pIORequst, ulong nErrorCode) = 0;
 
 	//功能函数
 public:

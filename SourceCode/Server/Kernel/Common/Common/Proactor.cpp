@@ -71,6 +71,7 @@ CProactor::CProactor() :
 
 CProactor::~CProactor()
 {
+	Shutdown();
 }
 
 //启动服务
@@ -99,7 +100,6 @@ bool CProactor::Start(sint nConcurrentThreads/* = -1*/)
 }
 
 //停止服务
-//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
 void CProactor::Shutdown()
 {
 	//状态检测
@@ -114,13 +114,14 @@ void CProactor::Shutdown()
 		IIORequst* pReq = new IIORequst();
 		m_IoCP.PostStatus(0, CompletionKey::kExit, static_cast<LPOVERLAPPED>(pReq));
 	}
-	m_bRunning = false;
 
 	//等待线程退出
 	for (auto itr = m_WorkThreads.begin(); itr != m_WorkThreads.end(); ++itr)
 	{
 		itr->join();
 	}
+
+	m_bRunning = false;
 
 	//关闭完成端口
 	m_IoCP.Release();
@@ -129,23 +130,12 @@ void CProactor::Shutdown()
 	m_WorkThreads.clear();
 
 	Trace()->Log(L"主动器已停止");
-
-	//删除自身
-	delete this;
-}
-
-//可服务状态
-bool CProactor::Serviceable()
-{
-	return m_bRunning;
 }
 
 //注册异步设备
 //参数 pIODevice：异步设备
 bool CProactor::RegisterDevice(IIODevice* pIODevice)
 {
-	Trace()->LogFormat(L"往主动器注册设备[%s]......", pIODevice->Name());
-
 	if (!m_bRunning || nullptr == pIODevice)
 	{
 		return false;

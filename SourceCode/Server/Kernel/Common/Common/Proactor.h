@@ -22,22 +22,11 @@ lihl		2017/12/27		   1.0		  build this module
 #include <vector>
 #include "iocp.h"
 
-class CProactor : public IProactorService
+class CProactor : public IProactor
 {
 public:
 	CProactor();
 	~CProactor();
-
-	//继承函数 IProactorService
-public:
-	//启动服务
-	//参数 nConcurrentThreads：并发线程数。不建议用户填写该参数。若无特殊要求则使用默认值
-	bool Start(sint nConcurrentThreads = -1) override;
-	//停止服务
-	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
-	void Shutdown() override;
-	//可服务状态
-	bool Serviceable() override;
 
 	//继承函数 IProactor
 public:
@@ -45,9 +34,16 @@ public:
 	//参数 pIODevice：异步设备
 	bool RegisterDevice(IIODevice* pIODevice) override;
 
-	//内部函数
-protected:
-	
+	//功能函数 
+public:
+	//启动服务
+	//参数 nConcurrentThreads：并发线程数。不建议用户填写该参数。若无特殊要求则使用默认值
+	bool Start(sint nConcurrentThreads = -1) ;
+	//停止服务
+	void Shutdown() ;
+	//可服务状态
+	bool Serviceable() const { return m_bRunning; }
+
 	//内部成员
 protected:
 	std::atomic_bool m_bRunning;	//运转状态

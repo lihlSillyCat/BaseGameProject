@@ -16,7 +16,7 @@ CCommonService::~CCommonService()
 //启动服务
 bool CCommonService::Start(ITrace* pTrace, DevelopmentEnvironment DevEnvironment)
 {
-	if (nullptr == pTrace)
+	if (nullptr == pTrace || m_bRunning)
 	{
 		return false;
 	}
@@ -44,16 +44,20 @@ void CCommonService::Shutdown()
 	{
 		(*itr)->Shutdown();
 	}
+}
+
+//释放资源
+//调用后不得再使用该对象，因为模块内部会将所有资源释放。
+void CCommonService::Release()
+{
+	for (auto itr = m_Proactors.begin(); itr != m_Proactors.end(); itr++)
+	{
+		delete (*itr);
+	}
 
 	CSharedRes::Instance()->Release();
 
 	delete this;
-}
-
-//服务状态
-bool CCommonService::Serviceable()
-{
-	return m_bRunning;
 }
 
 //获取一个主动器
@@ -65,7 +69,7 @@ IProactor* CCommonService::CreateProactor(sint nConcurrentThreads)
 		return nullptr;
 	}
 
-	IProactorService* pProactor = new CProactor();
+	CProactor* pProactor = new CProactor();
 	if (!pProactor->Start(nConcurrentThreads))
 	{
 		delete pProactor;

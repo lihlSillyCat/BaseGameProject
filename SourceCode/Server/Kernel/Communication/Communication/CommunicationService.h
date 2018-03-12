@@ -28,13 +28,15 @@ public:
 	//开始网络服务
 	bool Start(ITrace* pTrace, IProactor* pProactor, DevelopmentEnvironment DevEnvironment) override;
 
-	//停止网络服务
-	//注意：调用本函数后不得再使用该对象。应将指针置为空。
-	//如果需要再次使用网络通信服务，则需重新创建对象
+	//停止服务
 	void Shutdown() override;
 
 	//可服务状态
 	bool Serviceable() { return m_bRunning; }
+
+	//释放资源
+	//调用后不得再使用该对象，因为模块内部会将所有资源释放。
+	void Release() override;
 
 	//版本信息
 	const AppVersion& Version() override { return m_Version; }

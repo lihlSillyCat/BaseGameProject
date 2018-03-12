@@ -29,7 +29,7 @@ lihl		2018/2/5     	   1.0		  build this module
 class CTCPServer : public CWinsock, public INetServer
 {
 public:
-	CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler, bool bEnableEnDecryption);
+	CTCPServer(INetServerHandler* pServerHandler, bool bEnableEnDecryption);
 	virtual ~CTCPServer();
 
 	//继承 CWinsock
@@ -37,6 +37,10 @@ protected:
 	//操作完成通知
 	//参数 pIORequst：IO请求包
 	void OnIOCompleted(IIORequst* pIORequst) override;
+	//操作完成通知（失败）
+	//参数 pIORequst：IO请求包
+	//参数 nErrorCode ： 错误码
+	void OnIOCompletedError(IIORequst* pIORequst, ulong nErrorCode) override;
 
 	//继承 INetServer
 public:
@@ -53,7 +57,9 @@ public:
 	bool Start(ushort uPort);
 	//停止服务
 	void Shutdown();
-	
+	//清理资源
+	void Release();
+
 	//信息获取
 public:
 
@@ -70,6 +76,8 @@ protected:
 protected:
 	//接收到新的连接
 	void OnIOCompletedAccept(CNetAcceptIOReq* pIORequst);
+	//操作完成通知（失败）
+	void OnIOCompletedAcceptError(CNetAcceptIOReq* pIORequst, ulong nErrorCode);
 
 	//成员变量
 protected:
@@ -77,10 +85,6 @@ protected:
 	LPFN_ACCEPTEX m_fnAcceptEx;
 	//ACCEPT的IO请求队列
 	std::vector<CNetAcceptIOReq*> m_AcceptIOReqs;
-	//连接对象池(服务端公用)
-	static CObjectPool<CNetConnection> m_ConnectionPool;
-	//已连接的网络客户端
-	std::list<CNetConnection*>	m_ConnectedClients;
 	//服务端事件处理器
 	INetServerHandler* m_pServerHandler;
 	//客户端连接的事件处理器

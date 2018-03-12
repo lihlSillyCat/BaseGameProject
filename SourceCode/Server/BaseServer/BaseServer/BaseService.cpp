@@ -79,9 +79,13 @@ bool CBaseService::Start()
 		if (!CommunicationService()->Start(Trace(), m_pProactor, m_AppInfo.Environment()))
 		{
 			Trace()->LogError(L"通信服务启动失败");
-			return false;
+			break;
 		}
-
+		if (nullptr == CommunicationService()->GetNetworkService())
+		{
+			Trace()->LogError(L"网络通信服务启动失败");
+			break;
+		}
 		m_bRunning = true;
 		Trace()->Log(L"服务器已启动，开始工作");
 	} while (false);

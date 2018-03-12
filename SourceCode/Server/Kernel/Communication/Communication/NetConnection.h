@@ -21,26 +21,41 @@ public:
 	//加解密状态
 	//返回false表示明码传输；返回true表示加密传输
 	bool EnableEnDecryption() override { return m_bEncryptionDecryption; }
+	//设置连接的事件处理
+	//若不设置则默认为CreateServer时传入的统一事件处理器
+	bool SetHandler(INetConnectionHandler* pHandler) override;
+	INetConnectionHandler* Handler() override { return m_pConnectionHandler; }
+	//释放对象
+	void Release() override;
 
 	//继承 CWinsock
 protected:
 	//操作完成通知
 	//参数 pIORequst：IO请求包
 	void OnIOCompleted(IIORequst* pIORequst) override;
+	//操作完成通知（失败）
+	//参数 pIORequst：IO请求包
+	//参数 nErrorCode ： 错误码
+	void OnIOCompletedError(IIORequst* pIORequst, ulong nErrorCode) override;
 
 	//功能函数
 public:
 	//数据初始化
 	void Init(SOCKET sock, sockaddr_in& addr, INetConnectionHandler* pConnectionHandler, bool bEncryptionDecryption);
+	//开始工作
+	bool Start();
 	//清理数据
 	void Clear();
+
+protected:
 	//接收数据
-	bool Recv();
+	bool RecvData();
 
 	//异步完成事件
 protected:
 	//接收到新的连接
 	void OnIOCompletedRecv(CNetRecvIOReq* pIORequst);
+	void OnIOCompletedRecvError(CNetRecvIOReq* pIORequst, ulong nErrorCode);
 
 	//内部数据
 protected:
@@ -49,7 +64,6 @@ protected:
 	//接收缓存	
 	WSABUF m_wsaBufRecv;
 	char m_bufRecv[NetConstant::kMaxWSABufSize];
-	bool m_bRecving;
 	//加解密
 	bool m_bEncryptionDecryption;
 };

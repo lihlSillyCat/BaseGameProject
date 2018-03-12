@@ -17,6 +17,9 @@ lihl		2018/2/27    	   1.0		  build this module
 
 #pragma once
 
+#include "ObjectPool.h"
+#include "NetConnection.h"
+
 //便利宏
 
 //日志
@@ -25,6 +28,8 @@ lihl		2018/2/27    	   1.0		  build this module
 #define Proactor() CSharedRes::Instance()->GetProactor()
 //开发环境
 #define DevEnvironment() CSharedRes::Instance()->GetDevEnvironment()
+//连接对象池
+#define NetConnectionPool() CSharedRes::Instance()->GetNetConnectionPool()
 
 //共享资源类定义
 class CSharedRes : public CSingleton<CSharedRes>
@@ -44,6 +49,8 @@ public:
 	IProactor* GetProactor() const { return m_pProactor; }
 	//应用程序开发环境
 	DevelopmentEnvironment GetDevEnvironment() const { return m_DevEnvironment; }
+	//连接对象池(服务端公用)
+	CObjectPool<CNetConnection>* GetNetConnectionPool() { return &m_ConnectionPool; }
 
 	//功能函数
 public:
@@ -62,5 +69,7 @@ private:
 	IProactor* m_pProactor;
 	//应用程序开发环境
 	DevelopmentEnvironment m_DevEnvironment;
+	//连接对象池(服务端公用)
+	CObjectPool<CNetConnection> m_ConnectionPool;
 };
 

@@ -40,9 +40,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="通信模块服务">
-      <UniqueIdentifier>{4a825aa0-a29e-4c47-8950-af21aaad5214}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -82,7 +79,7 @@
       <Filter>网络通信服务\网络通信对象\异步IO请求</Filter>
     </ClInclude>
     <ClInclude Include="CommunicationService.h">
-      <Filter>通信模块服务</Filter>
+      <Filter>模块导出</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +114,7 @@
       <Filter>网络通信服务\网络通信对象\异步IO请求</Filter>
     </ClCompile>
     <ClCompile Include="CommunicationService.cpp">
-      <Filter>通信模块服务</Filter>
+      <Filter>模块导出</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

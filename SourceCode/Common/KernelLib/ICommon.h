@@ -17,7 +17,7 @@ lihl		2018/3/5		   1.0		  build this module
 #pragma once
 
 #include "IAppInfo.h"
-#include "IModule.h"
+#include "KernelModuleDef.h"
 
 //公共服务接口
 interface IProactor;

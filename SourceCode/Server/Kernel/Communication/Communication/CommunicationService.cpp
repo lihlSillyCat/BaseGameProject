@@ -53,9 +53,20 @@ bool CCommunicationService::Start(ITrace* pTrace, IProactor* pProactor, Developm
 //如果需要再次使用网络通信服务，则需重新创建对象
 void CCommunicationService::Shutdown()
 {
+	if (!m_bRunning)
+	{
+		return;
+	}
+
 	m_bRunning = false;
 	m_NetworkService.Shutdown();
+}
 
+//释放资源
+//调用后不得再使用该对象，因为模块内部会将所有资源释放。
+void CCommunicationService::Release()
+{
+	m_NetworkService.Release();
 	CSharedRes::Instance()->Release();
 
 	delete this;

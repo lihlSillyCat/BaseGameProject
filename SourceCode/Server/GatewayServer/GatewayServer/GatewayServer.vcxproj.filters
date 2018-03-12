@@ -27,7 +27,7 @@
     <Filter Include="服务器网络">
       <UniqueIdentifier>{03c37359-4736-4ea5-a96c-1bc8899bd0f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="服务器网络\网络服务">
+    <Filter Include="服务器网络\用户网络服务">
       <UniqueIdentifier>{1399c274-6874-492e-8469-8c4b8dde2501}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -47,8 +47,11 @@
     <ClInclude Include="AppInfo.h">
       <Filter>基础服务\应用程序信息</Filter>
     </ClInclude>
-    <ClInclude Include="LocalNetServer.h">
-      <Filter>服务器网络\网络服务</Filter>
+    <ClInclude Include="UserNetServer.h">
+      <Filter>服务器网络\用户网络服务</Filter>
+    </ClInclude>
+    <ClInclude Include="UserNetClient.h">
+      <Filter>服务器网络\用户网络服务</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,8 +70,11 @@
     <ClCompile Include="AppInfo.cpp">
       <Filter>基础服务\应用程序信息</Filter>
     </ClCompile>
-    <ClCompile Include="LocalNetServer.cpp">
-      <Filter>服务器网络\网络服务</Filter>
+    <ClCompile Include="UserNetServer.cpp">
+      <Filter>服务器网络\用户网络服务</Filter>
+    </ClCompile>
+    <ClCompile Include="UserNetClient.cpp">
+      <Filter>服务器网络\用户网络服务</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

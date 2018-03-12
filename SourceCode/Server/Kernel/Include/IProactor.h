@@ -61,20 +61,7 @@ interface IIODevice
 //主动器接口
 interface IProactor
 {
-	//注册异步设备，注册后该设备的异步请求完成会触发其 OnCompleted 函数。
+	//注册异步设备，注册后该设备的异步请求完成会触发其 OnCompleted / OnIOCompletedError 函数。
 	//参数 pIODevice：异步设备
 	virtual bool RegisterDevice(IIODevice* pIODevice) = 0;
-};
-
-//主动器服务类
-interface IProactorService : public IProactor
-{
-	//启动服务
-	//参数 nConcurrentThreads：并发线程数。不建议用户填写该参数。若无特殊要求则使用默认值
-	virtual bool Start(sint nConcurrentThreads = -1) = 0;
-	//停止服务（阻塞）
-	//停止后不得再使用该对象，因为函数内部会将本对象释放掉。
-	virtual void Shutdown() = 0;
-	//可服务状态
-	virtual bool Serviceable() = 0;
 };

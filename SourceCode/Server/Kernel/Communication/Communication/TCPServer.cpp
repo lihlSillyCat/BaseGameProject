@@ -20,17 +20,12 @@ lihl		2018/3/1     	   1.1		  添加接收代码
 #include "TCPServer.h"
 #include "NetConnection.h"
 
-//连接对象池(服务端公用)
-CObjectPool<CNetConnection> CTCPServer::m_ConnectionPool;
-
-CTCPServer::CTCPServer(INetServerHandler* pServerHandler, INetConnectionHandler* pConnectionHandler, bool bEnableEnDecryption) :
+CTCPServer::CTCPServer(INetServerHandler* pServerHandler, bool bEnableEnDecryption) :
 	m_pServerHandler(pServerHandler),
-	m_pConnectionHandler(pConnectionHandler),
 	m_fnAcceptEx(NULL),
 	m_bEncryptionDecryption(bEnableEnDecryption)
 {
 	ASSERT_LOG(Trace(), pServerHandler != nullptr, L"网络服务器事件处理器不能为空");
-	ASSERT_LOG(Trace(), pConnectionHandler != nullptr, L"网络服务器客户端连接的事件处理器不能为空");
 }
 
 CTCPServer::~CTCPServer()
@@ -67,7 +62,6 @@ bool CTCPServer::Start(ushort uPort)
 	//开始接收客户端网络连接
 	if (!CreateClientsAndAccept())
 	{
-		Shutdown();
 		Trace()->LogError(L"创建网络客户端连接并接收操作失败！");
 		return false;
 	}
@@ -106,7 +100,23 @@ bool CTCPServer::LoadfnAcceptExPtr()
 //停止服务
 void CTCPServer::Shutdown()
 {
+	m_bRunning = false;
 
+	for (auto itr = m_AcceptIOReqs.begin(); itr != m_AcceptIOReqs.end(); ++itr)
+	{
+		CloseSocket((*itr)->sockAccept);
+	}
+
+	CloseSocket(m_socket);
+}
+
+//清理资源
+void CTCPServer::Release()
+{
+	for (auto itr = m_AcceptIOReqs.begin(); itr != m_AcceptIOReqs.end(); ++itr)
+	{
+		delete (*itr);
+	}
 }
 
 //创建一个监听类型SOCKET
@@ -178,13 +188,13 @@ void CTCPServer::GetLocalAddr(wchar* wsIP, uint nSize, ushort& port)
 bool CTCPServer::CreateClientsAndAccept()
 {
 	//当容器中数量过小则批量创建
-	if (m_AcceptIOReqs.size() >= NetConstant::kAcceptIOReqMin)
+	if (m_AcceptIOReqs.size() >= NetConstant::kIncomingConnectionMinNum)
 	{
 		return true;
 	}
 
 	DWORD dwBytesReceived;
-	for (size_t i = m_AcceptIOReqs.size(); i < NetConstant::kAcceptIOReqMax; i++)
+	for (size_t i = m_AcceptIOReqs.size(); i < NetConstant::kIncomingConnectionMaxNum; i++)
 	{
 		CNetAcceptIOReq* pIORequst = new CNetAcceptIOReq();
 		CreateAsyncSock(pIORequst->sockAccept, IPPROTO_TCP);
@@ -223,6 +233,21 @@ void CTCPServer::OnIOCompleted(IIORequst* pIORequst)
 	}
 }
 
+//操作完成通知（失败）
+//参数 pIORequst：IO请求包
+//参数 nErrorCode ： 错误码
+void CTCPServer::OnIOCompletedError(IIORequst* pIORequst, ulong nErrorCode)
+{
+	switch (((CNetIORequst*)pIORequst)->NetOperation)
+	{
+	case NetAsyncOperation::kAccept:
+		OnIOCompletedAcceptError((CNetAcceptIOReq*)pIORequst, nErrorCode);
+		break;
+	default:
+		break;
+	}
+}
+
 //接收到新的连接
 void CTCPServer::OnIOCompletedAccept(CNetAcceptIOReq* pIORequst)
 {
@@ -242,8 +267,13 @@ void CTCPServer::OnIOCompletedAccept(CNetAcceptIOReq* pIORequst)
 		(sockaddr**)&localaddr, &localaddrlen, (sockaddr**)&remoteaddr, &remoteaddrlen);
 
 	//生成一新的连接并释放IO请求包
-	CNetConnection* pConnection = m_ConnectionPool.NewObject();
+	CNetConnection* pConnection = NetConnectionPool()->NewObject();
 	pConnection->Init(pIORequst->sockAccept, remoteaddr, m_pConnectionHandler, m_bEncryptionDecryption);
+	auto itr = std::find(m_AcceptIOReqs.begin(), m_AcceptIOReqs.end(), pIORequst);
+	if (itr != m_AcceptIOReqs.end())
+	{
+		m_AcceptIOReqs.erase(itr);
+	}
 	delete pIORequst;
 
 	//将新连接加入主动器
@@ -252,9 +282,22 @@ void CTCPServer::OnIOCompletedAccept(CNetAcceptIOReq* pIORequst)
 	//通知调度器
 	m_pServerHandler->OnAccept(pConnection);
 
-	//读取数据
-	pConnection->Recv();
+	//开始工作
+	pConnection->Start();
 
 	//继续接收
 	CreateClientsAndAccept();
+}
+
+//操作完成通知（失败）
+void CTCPServer::OnIOCompletedAcceptError(CNetAcceptIOReq* pIORequst, ulong nErrorCode)
+{
+	m_pServerHandler->OnError(nErrorCode);
+
+	auto itr = std::find(m_AcceptIOReqs.begin(), m_AcceptIOReqs.end(), pIORequst);
+	if (itr != m_AcceptIOReqs.end())
+	{
+		m_AcceptIOReqs.erase(itr);
+	}
+	delete pIORequst;
 }

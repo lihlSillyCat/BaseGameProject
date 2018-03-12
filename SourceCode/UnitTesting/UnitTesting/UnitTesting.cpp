@@ -298,10 +298,14 @@ void CUnitTesting::NewDel()
 void CUnitTesting::MinTest()
 {
 	//std::vector<Note3> ns(100);
-	std::vector<int> ns(100);
+	//std::vector<int> ns(100);
 
-	for (auto itr = ns.begin(); itr != ns.end(); itr++)
-	{
-		*itr = 5;
-	}
+	//for (auto itr = ns.begin(); itr != ns.end(); itr++)
+	//{
+	//	*itr = 5;
+	//}
+
+	size_t a = -1;
+
+	int b = a;
 }

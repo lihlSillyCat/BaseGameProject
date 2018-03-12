@@ -15,12 +15,9 @@
     <Filter Include="反应器%28Reactor%29">
       <UniqueIdentifier>{3389f9e1-a527-4a2b-bdc0-ff4e1b69ac67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DLL导出函数">
+    <Filter Include="模块导出">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="公共服务">
-      <UniqueIdentifier>{4a9593cb-7b6a-4a99-8ce9-1888d563f138}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -39,19 +36,19 @@
     <ClInclude Include="Proactor.h">
       <Filter>主动器%28Proactor%29</Filter>
     </ClInclude>
-    <ClInclude Include="CommonService.h">
-      <Filter>公共服务</Filter>
-    </ClInclude>
     <ClInclude Include="SharedRes.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonService.h">
+      <Filter>模块导出</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>DLL导出函数</Filter>
+      <Filter>模块导出</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>DLL导出函数</Filter>
+      <Filter>模块导出</Filter>
     </ClCompile>
     <ClCompile Include="Reactor.cpp">
       <Filter>反应器%28Reactor%29</Filter>
@@ -63,7 +60,7 @@
       <Filter>主动器%28Proactor%29</Filter>
     </ClCompile>
     <ClCompile Include="CommonService.cpp">
-      <Filter>公共服务</Filter>
+      <Filter>模块导出</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

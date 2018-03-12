@@ -13,6 +13,7 @@
 * History:
 <author>	<time>			<version>	  <desc>
 lihl		2018/3/2     	   1.0		  build this module
+lihl		2018/3/9     	   1.1		  增加池子最大对象数量限制，防止高爆发后内存居高不下
 ************************************************************************/
 
 #pragma once
@@ -23,9 +24,10 @@ template<typename TObject>
 class CObjectPool
 {
 public:
-	CObjectPool() {}
-	~CObjectPool() {
-		Clear();
+	CObjectPool(size_t maxnum = -1) : m_uMaxObjectNum(maxnum) {
+	}
+	virtual ~CObjectPool() {
+		ReleaseObject();
 	}
 
 	//功能函数
@@ -60,19 +62,37 @@ public:
 			if (itr->pObj == pObj)
 			{
 				itr->bFree = true;
-				return;
+				break;
 			}
+		}
+
+		//删除过多的空闲对象
+		if (m_Objects.size() > m_uMaxObjectNum)
+		{
+			PopFreeObject();
 		}
 	}
 
-	//清理池子
-	void Clear()
+protected:
+	void ReleaseObject()
 	{
 		for (auto itr = m_Objects.begin(); itr != m_Objects.end(); ++itr)
 		{
-			if (!itr->bFree)
+			delete itr->pObj;
+		}
+	}
+	void PopFreeObject()
+	{
+		for (auto itr = m_Objects.begin(); itr != m_Objects.end() && m_Objects.size() > m_uMaxObjectNum; )
+		{
+			if (itr->bFree)
 			{
 				delete itr->pObj;
+				itr = m_Objects.erase(itr);
+			}
+			else
+			{
+				++itr;
 			}
 		}
 	}
@@ -85,5 +105,9 @@ protected:
 		bool bFree;
 	};
 	std::vector<ObjItem> m_Objects;
+	//最大对象数量
+	//当new超过最大数量时继续new是OK的，在回收的时候则在空闲对象中删除一部分。
+	//防止高爆发后转低谷时内存依旧占用过高
+	size_t m_uMaxObjectNum;
 };
 
