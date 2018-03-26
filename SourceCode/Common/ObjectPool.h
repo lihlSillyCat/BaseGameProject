@@ -24,7 +24,9 @@ template<typename TObject>
 class CObjectPool
 {
 public:
-	CObjectPool(size_t maxnum = -1) : m_uMaxObjectNum(maxnum) {
+	CObjectPool(size_t maxnum = -1) : 
+		m_uMaxObjectNum(maxnum),
+		m_uActivatedNum(0) {
 	}
 	virtual ~CObjectPool() {
 		ReleaseObject();
@@ -41,6 +43,7 @@ public:
 			if (itr->bFree)
 			{
 				itr->bFree = false;
+				++m_uActivatedNum;
 				return itr->pObj;
 			}
 		}
@@ -50,6 +53,7 @@ public:
 		item.pObj = new TObject();
 		item.bFree = false;
 		m_Objects.push_back(item);
+		++m_uActivatedNum;
 		return item.pObj;
 	}
 
@@ -62,12 +66,13 @@ public:
 			if (itr->pObj == pObj)
 			{
 				itr->bFree = true;
+				--m_uActivatedNum;
 				break;
 			}
 		}
 
 		//删除过多的空闲对象
-		if (m_Objects.size() > m_uMaxObjectNum)
+		if (m_Objects.size() > m_uMaxObjectNum && m_uActivatedNum < m_uMaxObjectNum)
 		{
 			PopFreeObject();
 		}
@@ -109,5 +114,7 @@ protected:
 	//当new超过最大数量时继续new是OK的，在回收的时候则在空闲对象中删除一部分。
 	//防止高爆发后转低谷时内存依旧占用过高
 	size_t m_uMaxObjectNum;
+	//激活数量
+	size_t m_uActivatedNum;
 };
 

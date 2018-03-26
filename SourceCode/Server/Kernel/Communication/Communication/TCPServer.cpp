@@ -294,10 +294,10 @@ void CTCPServer::OnIOCompletedAcceptError(CNetAcceptIOReq* pIORequst, ulong nErr
 {
 	m_pServerHandler->OnError(nErrorCode);
 
-	auto itr = std::find(m_AcceptIOReqs.begin(), m_AcceptIOReqs.end(), pIORequst);
-	if (itr != m_AcceptIOReqs.end())
-	{
-		m_AcceptIOReqs.erase(itr);
-	}
-	delete pIORequst;
+	//auto itr = std::find(m_AcceptIOReqs.begin(), m_AcceptIOReqs.end(), pIORequst);
+	//if (itr != m_AcceptIOReqs.end())
+	//{
+	//	m_AcceptIOReqs.erase(itr);
+	//}
+	//delete pIORequst;
 }
